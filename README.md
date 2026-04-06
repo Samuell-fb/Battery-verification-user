@@ -1,2 +1,2 @@
-# Battery-verificaci-n-xf
+# Battery-verificaio-n-xf
 Verificación de la app Battery monitor detector 
