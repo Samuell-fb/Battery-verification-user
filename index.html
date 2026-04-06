@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación Exitosa - Battery Detector Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background effect */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            background: rgba(10, 20, 40, 0.9);
+            border: 2px solid;
+            border-image: linear-gradient(135deg, #00ffff, #bd00ff) 1;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.2),
+                        inset 0 0 50px rgba(0, 255, 255, 0.05);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #00ffff;
+        }
+
+        .corner-tl {
+            top: -2px;
+            left: -2px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-tr {
+            top: -2px;
+            right: -2px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-bl {
+            bottom: -2px;
+            left: -2px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-br {
+            bottom: -2px;
+            right: -2px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .icon-success {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            position: relative;
+            animation: scaleIn 0.6s ease-out 0.3s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .checkmark {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #00ffff;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5),
+                        inset 0 0 30px rgba(0, 255, 255, 0.2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 30px rgba(0, 255, 255, 0.5),
+                            inset 0 0 30px rgba(0, 255, 255, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(0, 255, 255, 0.8),
+                            inset 0 0 50px rgba(0, 255, 255, 0.3);
+            }
+        }
+
+        .checkmark::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 70px;
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff;
+            animation: checkmarkAppear 0.4s ease-out 0.6s both;
+        }
+
+        @keyframes checkmarkAppear {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00ffff, #bd00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: slideIn 0.6s ease-out 0.4s both;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .subtitle {
+            color: #00ffff;
+            font-size: 18px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            animation: slideIn 0.6s ease-out 0.5s both;
+        }
+
+        .message {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            animation: slideIn 0.6s ease-out 0.6s both;
+        }
+
+        .battery-icon {
+            display: inline-block;
+            font-size: 40px;
+            margin: 20px 0;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .lang-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-toggle:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .lang-content {
+            display: none;
+        }
+
+        .lang-content.active {
+            display: block;
+        }
+
+        .divider {
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ffff, #bd00ff, transparent);
+            margin: 30px auto;
+            animation: slideIn 0.6s ease-out 0.7s both;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-top: 30px;
+            animation: slideIn 0.6s ease-out 0.8s both;
+        }
+
+        .glitch {
+            position: relative;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 25px;
+            }
+            
+            .title {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+            }
+            
+            .message {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <button class="lang-toggle" onclick="toggleLanguage()">
+            <span id="lang-btn-text">ES / EN</span>
+        </button>
+
+        <!-- Spanish Version -->
+        <div id="es-content" class="lang-content active">
+            <div class="icon-success">
+                <div class="checkmark"></div>
+            </div>
+
+            <h1 class="title glitch">¡Verificación Completada!</h1>
+            <p class="subtitle">✅ ESTADO: CONFIRMADO</p>
+
+            <div class="divider"></div>
+
+            <p class="message">
+                Tu cuenta ha sido verificada exitosamente.<br>
+                Ahora tienes acceso completo a todas las funciones avanzadas de<br>
+                <strong style="color: #00ffff;">Battery Detector Monitor</strong>
+            </p>
+
+            <div class="battery-icon">🔋</div>
+
+            <p class="message">
+                Disfruta del sistema de diagnóstico más completo para tu batería.<br>
+                ¡Gracias por unirte a nuestra comunidad!
+            </p>
+
+            <div class="divider"></div>
+
+            <p class="footer-text">SISTEMA DE DIAGNÓSTICO AVANZADO v3.0</p>
+        </div>
+
+        <!-- English Version -->
+        <div id="en-content" class="lang-content">
+            <div class="icon-success">
+                <div class="checkmark"></div>
+            </div>
+
+            <h1 class="title glitch">Verification Complete!</h1>
+            <p class="subtitle">✅ STATUS: CONFIRMED</p>
+
+            <div class="divider"></div>
+
+            <p class="message">
+                Your account has been successfully verified.<br>
+                You now have full access to all advanced features of<br>
+                <strong style="color: #00ffff;">Battery Detector Monitor</strong>
+            </p>
+
+            <div class="battery-icon">🔋</div>
+
+            <p class="message">
+                Enjoy the most complete diagnostic system for your battery.<br>
+                Thank you for joining our community!
+            </p>
+
+            <div class="divider"></div>
+
+            <p class="footer-text">ADVANCED DIAGNOSTIC SYSTEM v3.0</p>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'es';
+
+        function toggleLanguage() {
+            const esContent = document.getElementById('es-content');
+            const enContent = document.getElementById('en-content');
+            
+            if (currentLang === 'es') {
+                esContent.classList.remove('active');
+                enContent.classList.add('active');
+                currentLang = 'en';
+            } else {
+                enContent.classList.remove('active');
+                esContent.classList.add('active');
+                currentLang = 'es';
+            }
+        }
+
+        // Add some interactive glitch effect on title hover
+        const title = document.querySelectorAll('.title');
+        title.forEach(t => {
+            t.addEventListener('mouseenter', function() {
+                this.style.textShadow = '0 0 20px #00ffff, 0 0 40px #bd00ff';
+            });
+            t.addEventListener('mouseleave', function() {
+                this.style.textShadow = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
